@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SIR</title>
+<style>
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #e3eeff 0%, #f9f9ff 100%);
+    padding: 20px;
+    color: #222;
+}
+h2 { 
+    color: #1a73e8; 
+    text-align: center;
+    font-size: 24px;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+}
+.container {
+    background: rgba(255,255,255,0.75);
+    padding: 20px 25px;
+    border-radius: 15px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    max-width: 1000px;
+    margin: auto;
+    border: 1px solid rgba(255,255,255,0.5);
+}
+
+/* Form Table */
+table.form-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+table.form-table td { 
+    padding: 8px; 
+    font-weight: 500;
+}
+input, select {
+    width: 95%;
+    padding: 7px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.85);
+}
+input:focus, select:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 6px rgba(26,115,232,0.4);
+}
+
+/* 3D Glass Buttons */
+button {
+    margin: 8px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    backdrop-filter: blur(6px);
+    background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05));
+    position: relative;
+}
+button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0));
+    opacity: 0.4;
+}
+button.save { background-color: #1a73e8; }
+button.update { background-color: #28a745; }
+button.delete { background-color: #dc3545; }
+button.search-btn { background-color: #ff9800; }
+button.export { background-color: #6f42c1; }
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+button:active {
+    transform: translateY(1px);
+}
+
+/* Message */
+#msg {
+    text-align: center;
+    font-weight: bold;
+    margin: 15px 0;
+    color: #333;
+}
+
+/* Table Container */
+#tableContainer {
+    margin-top: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+}
+#tableContainer table {
+    width: 100%;
+    border-collapse: collapse;
+}
+#tableContainer th, #tableContainer td {
+    padding: 7px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 13px;
+}
+#tableContainer tr.selected {
+    background-color: #e3f2fd;
+}
+
+/* Search box */
+#searchBox {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.85);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+#searchBox:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 5px rgba(26,115,232,0.3);
+}
+
+/* Top action bar */
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<h2>SIR 2025 DATA ENTRY MODULE(Chanchal-I, Malda)</h2>
+<div class="container">
+    <table class="form-table">
+        <tr><td>EPIC_NO</td><td><input id="EPIC_NO"></td><td>OLD_EPIC_NO</td><td><input id="OLD_EPIC_NO"></td></tr>
+        <tr><td>AC_NO</td><td><input id="AC_NO"></td><td>OLD_AC_NO</td><td><input id="OLD_AC_NO"></td></tr>
+        <tr><td>PART_NO</td><td><input id="PART_NO"></td><td>OLD_PART_NO</td><td><input id="OLD_PART_NO"></td></tr>
+        <tr><td>SERIAL_NO_IN_PART</td><td><input id="SERIAL_NO_IN_PART"></td><td>OLD_PART_SERIAL_NO</td><td><input id="OLD_PART_SERIAL_NO"></td></tr>
+        <tr><td></td><td></td><td>Relation</td>
+            <td>
+                <select id="Relation">
+                    <option value="">-- Select Relation --</option>
+                    <option value="SELF">SELF</option>
+                    <option value="PARENTS">PARENTS</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+
+    <div style="text-align:center;">
+        <button class="save" onclick="sendData('save', this)">💾 Save</button>
+        <button class="update" onclick="sendData('update', this)">♻️ Update</button>
+        <button class="delete" onclick="sendData('delete', this)">🗑️ Delete</button>
+    </div>
+
+    <div id="msg"></div>
+
+    <!-- Search + Export Bar -->
+    <div class="action-bar">
+        <input type="text" id="searchBox" placeholder="🔍 Search by any column..." onkeyup="filterTable()">
+        <button class="export" onclick="exportToExcel()">📤 Export Excel</button>
+    </div>
+
+    <div id="tableContainer"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+const scriptURL = "https://script.google.com/macros/s/AKfycbzcKuM-VrhVdrfMCI9aIaYL3M8XSuNZ0uGEfXxAj89kxwI-U2tI4DueVQpJobpCeuC-/exec";
+
+// Hidden unique ID
+const hiddenID = document.createElement("input");
+hiddenID.type = "hidden";
+hiddenID.id = "Unique_ID";
+document.body.appendChild(hiddenID);
+
+function getFormData() {
+    return {
+        Unique_ID: Unique_ID.value.trim(),
+        EPIC_NO: EPIC_NO.value.trim(),
+        AC_NO: AC_NO.value.trim(),
+        PART_NO: PART_NO.value.trim(),
+        SERIAL_NO_IN_PART: SERIAL_NO_IN_PART.value.trim(),
+        OLD_AC_NO: OLD_AC_NO.value.trim(),
+        OLD_PART_NO: OLD_PART_NO.value.trim(),
+        OLD_PART_SERIAL_NO: OLD_PART_SERIAL_NO.value.trim(),
+        OLD_EPIC_NO: OLD_EPIC_NO.value.trim(),
+        Relation: Relation.value.trim()
+    };
+}
+
+async function sendData(action, btn) {
+    const data = getFormData();
+    data.action = action;
+    btn.disabled = true;
+    const originalText = btn.innerText;
+    btn.innerText = "⏳ Processing...";
+    try {
+        const res = await fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data).toString()
+        });
+        const json = await res.json();
+        document.getElementById('msg').innerText = json.message || '';
+        if (action !== 'search') clearForm();
+        await showData();
+    } catch (err) {
+        document.getElementById('msg').innerText = "❌ Error: " + err;
+    }
+    btn.innerText = originalText;
+    btn.disabled = false;
+}
+
+function clearForm() {
+    document.querySelectorAll('input, select').forEach(el => {
+        if (el.type !== 'hidden') el.value = '';
+    });
+    clearSelection();
+}
+
+async function showData() {
+    try {
+        const res = await fetch(scriptURL + '?action=getAll');
+        const json = await res.json();
+        const container = document.getElementById('tableContainer');
+        if (json.status !== 'success' || json.data.length === 0) {
+            container.innerHTML = "<p style='text-align:center;padding:10px;'>No data found</p>";
+            return;
+        }
+        const headers = Object.keys(json.data[0]).filter(k => k !== "Unique ID");
+        let html = '<table id="dataTable"><thead><tr>';
+        headers.forEach(k => html += `<th>${k}</th>`);
+        html += '</tr></thead><tbody>';
+        json.data.forEach(row => {
+            html += `<tr data-id="${row['Unique ID']}" onclick="fillForm(this)">`;
+            headers.forEach(k => html += `<td>${row[k] || ''}</td>`);
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    } catch (err) {
+        document.getElementById('msg').innerText = "❌ Error loading data: " + err;
+    }
+}
+
+function fillForm(tr) {
+    clearSelection();
+    tr.classList.add('selected');
+    const tds = tr.querySelectorAll('td');
+    const data = Array.from(tds).map(td => td.innerText);
+    [EPIC_NO.value, AC_NO.value, PART_NO.value, SERIAL_NO_IN_PART.value,
+     OLD_AC_NO.value, OLD_PART_NO.value, OLD_PART_SERIAL_NO.value,
+     OLD_EPIC_NO.value, Relation.value] = data;
+    Unique_ID.value = tr.dataset.id;
+}
+
+function clearSelection() {
+    document.querySelectorAll('#tableContainer tr.selected').forEach(tr => tr.classList.remove('selected'));
+}
+
+function filterTable() {
+    const filter = document.getElementById('searchBox').value.toLowerCase();
+    const rows = document.querySelectorAll('#tableContainer tbody tr');
+    rows.forEach(tr => {
+        const text = tr.innerText.toLowerCase();
+        tr.style.display = text.includes(filter) ? '' : 'none';
+    });
+}
+
+// === EXPORT TO EXCEL ===
+function exportToExcel() {
+    const table = document.querySelector("#dataTable");
+    if (!table) {
+        alert("No data available to export.");
+        return;
+    }
+    const wb = XLSX.utils.table_to_book(table, { sheet: "EPIC Data" });
+    XLSX.writeFile(wb, "EPIC_Data.xlsx");
+}
+
+showData();
+</script>
+</body>
+</html>

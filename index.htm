@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GP Management Portal – SIR 2025 Entry</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", Arial, sans-serif; background-color: #1f1f1f; color: #eee; overflow: hidden; }
+
+    /* Navbar */
+    header {
+      background: #111;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      border-bottom: 2px solid #007bff;
+    }
+    header h1 { font-size: 20px; font-weight: 600; letter-spacing: 1px; }
+    .datetime { font-size: 13px; color: #bbb; }
+    .ticker {
+      background: #007bff; color: #fff; font-size: 13px; padding: 5px 10px;
+      overflow: hidden; white-space: nowrap; position: relative; margin-top: 4px;
+    }
+    .ticker span {
+      position: absolute; width: 100%; animation: scroll 15s linear infinite;
+    }
+    @keyframes scroll { 0% { left: 100%; } 100% { left: -100%; } }
+
+    /* Layout */
+    .container { display: flex; height: calc(100vh - 70px); }
+    aside {
+      width: 230px; background: #181818; border-right: 1px solid #333;
+      display: flex; flex-direction: column; transition: width 0.3s ease;
+    }
+    aside h2 {
+      font-size: 14px; color: #aaa; padding: 15px 10px 5px 15px;
+      border-bottom: 1px solid #333; text-transform: uppercase;
+    }
+    aside a {
+      color: #eee; text-decoration: none; padding: 12px 20px;
+      border-left: 3px solid transparent; display: block; transition: 0.2s;
+    }
+    aside a:hover, aside a.active {
+      background: #007bff33; border-left-color: #007bff;
+    }
+
+    /* iframe */
+    main { flex: 1; background: #222; }
+    iframe {
+      width: 100%; height: 100%; border: none;
+      background: #222; animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      aside { width: 70px; }
+      aside h2, aside a span { display: none; }
+      aside a { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>GP Management Portal – SIR 2025 Entry</h1>
+    <div class="datetime" id="datetime"></div>
+  </header>
+
+  <div class="ticker">
+    <span>Welcome to the GP Management Portal | SIR 2025 Data Entry | Maintain Accurate Panchayat Records | Developed by Dipankar</span>
+  </div>
+
+  <div class="container">
+    <aside>
+      <h2>Modules</h2>
+      <a href="#" class="active" onclick="loadPage('sir.htm', this)">📋 <span>SIR Data Entry</span></a>
+      <a href="#" onclick="loadPage('dashboard.htm', this)">📊 <span>Dashboard</span></a>
+      <a href="#" onclick="loadPage('report.htm', this)">📑 <span>Reports</span></a>
+    </aside>
+
+    <main>
+      <iframe id="contentFrame" src="sir.htm"></iframe>
+    </main>
+  </div>
+
+  <script>
+    // Load page into iframe
+    function loadPage(page, el) {
+      document.getElementById('contentFrame').src = page;
+      document.querySelectorAll('aside a').forEach(a => a.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // Live date & time
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('datetime').textContent =
+        now.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+
+</body>
+</html>
